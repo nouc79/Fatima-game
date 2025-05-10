@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -357,9 +357,9 @@ h1 {
 
   
   <!-- Page 8 -->
-<div id="game-screen" class="overlay">
+  <div id="game-screen" class="overlay">
+    <div id="feedback" style="margin: 10px; font-size: 24px; font-weight: bold; color: darkblue;"></div>
   <div id="live-scores" style="margin: 10px; font-size: 20px;"></div>
-  <div id="feedback" style="margin-top: 20px; font-size: 24px; font-weight: bold; color: darkblue;"></div>
 
 
   <!-- Start of Questions -->
@@ -597,16 +597,6 @@ h1 {
 
     <button class="btn" style="margin-top: 30px;" onclick="location.reload()">🔁 إعادة اللعبة</button>
   </div>
-</div>
- <!-- Results Screen -->
- <div id="results-screen" class="full-screen">
-  <h1>Results</h1>
-  <div id="score-summary"></div>
-  <div id="winner"></div>
-  <button class="btn" onclick="location.reload()">Restart</button>
-</div>
-
-</div>
   <footer>
     Made by Noora Sami Sanad - CyberSecurity Student in UOB<br>
     Supervised and followed up by: Fatima Essam
@@ -625,32 +615,30 @@ h1 {
     }
     
     function saveTeams() {
+      
       teamNames = Array.from(document.querySelectorAll(".team-name"))
                 .map(i => i.value.trim()).filter(v => v !== "");
+                if (teamNames.length) {
+                currentTeamIndex = Math.floor(Math.random() * teamNames.length);
+                document.getElementById("feedback").textContent = `سيبدأ الفريق: ${teamNames[currentTeamIndex]}`;
+
+}
 
       const inputs = document.querySelectorAll(".team-name");
       teamScores = new Array(teamNames.length).fill(0);
 
     
       const teamButtonsContainer = document.getElementById("team-buttons");
-      teamButtonsContainer.innerHTML = "";
-      
+      teamButtonsContainer.innerHTML = "";}
+
       teamNames.forEach(name => {
-        const b = document.createElement("button");
-        b.className = "btn"; 
-        b.textContent = name; 
-        b.style.margin = "5px";
-        teamButtonsContainer.appendChild(b);
-      });
-    
-      if (teamNames.length) {
-  currentTeamIndex = Math.floor(Math.random() * teamNames.length);
-  document.getElementById("feedback").textContent = `سيبدأ الفريق: ${teamNames[currentTeamIndex]}`;
+  const b = document.createElement("button");
+  b.className = "btn"; 
+  b.textContent = name; 
+  b.style.margin = "5px";
+  teamButtonsContainer.appendChild(b);
+});
 
-}
-
-    }
-    
     function selectQuestion(idx) {
       currentQuestion = idx;
       showOnly("game-screen");
@@ -755,7 +743,7 @@ let winningTeams = teamNames.filter((_, i) => teamScores[i] === highestScore);
 
   document.querySelectorAll(".full-screen").forEach(el => el.style.display = "none");
   document.getElementById("results-screen").style.display = "flex";
-}
+n}
 
     function restartGame() {
       teamNames = [];
