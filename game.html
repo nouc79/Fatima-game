@@ -359,6 +359,8 @@ h1 {
   <!-- Page 8 -->
 <div id="game-screen" class="overlay">
   <div id="live-scores" style="margin: 10px; font-size: 20px;"></div>
+  <div id="feedback" style="margin-top: 20px; font-size: 24px; font-weight: bold; color: darkblue;"></div>
+
 
   <!-- Start of Questions -->
   <!-- Just replace the image file names with the correct images like "Quation1.png", "Quation2.png", etc. -->
@@ -753,10 +755,6 @@ let winningTeams = teamNames.filter((_, i) => teamScores[i] === highestScore);
 
   document.querySelectorAll(".full-screen").forEach(el => el.style.display = "none");
   document.getElementById("results-screen").style.display = "flex";
-}
-    function nextTeam() {
-    currentTeamIndex = (currentTeamIndex + 1) % teamNames.length;
-    document.getElementById("feedback").textContent = `Now it's ${teamNames[currentTeamIndex]}'s turn`;
 }
 
     function restartGame() {
