@@ -196,7 +196,21 @@ input.incorrect {
     }
 
     .score { font-size: 20px; margin: 15px 0; }
-    #feedback { font-size: 22px; font-weight: bold; }
+    #feedback {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffcc00;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+}
+
 
     footer {
       background-color: #807474;
@@ -290,20 +304,20 @@ h1 {
   <!-- Page 3 -->
   <div id="intro-screen">
     <div class="intro-inputs">
-      <h2>أدخل إسم مجموعتك</h2>
-      <input type="text" class="team-name" placeholder="اسم المجموعة 1" />
-      <input type="text" class="team-name" placeholder="اسم المجموعة 2" />
-      <input type="text" class="team-name" placeholder="اسم المجموعة 3" />
-      <input type="text" class="team-name" placeholder="اسم المجموعة 4" />
-      <button class="btn" onclick="saveTeams()">حفظ</button>
-      <div id="team-buttons" style="margin-top:10px;"></div>
-      <button class="btn" onclick="showOnly('page-4')">ابدأ التحدي</button>
+    <h2>أدخل إسم مجموعتك</h2>
+    <input type="text" class="team-name" placeholder="اسم المجموعة 1" />
+    <input type="text" class="team-name" placeholder="اسم المجموعة 2" />
+    <input type="text" class="team-name" placeholder="اسم المجموعة 3" />
+    <input type="text" class="team-name" placeholder="اسم المجموعة 4" />
+    <div id="team-buttons" style="margin-top:10px;"></div>
+<button class="btn" onclick="saveTeamsAndStart()">ابدأ التحدي</button>
+
     </div>
   </div>
 
   <!-- Page 4 -->
   <div id="page-4">
-    <button class="btn start-btn" onclick="showOnly('page-5')">إبدأ</button>
+<button class="btn" onclick="showOnly('page-5')">التالي</button>
     <div id="team-start-announcement" style="position: absolute; top: 2cm; right: 3cm; font-size: 24px; color: darkblue; font-weight: bold;"></div>
     <div class="video-links">
       <a href="https://youtu.be/wehOcwY_EnE" target="_blank" class="video-link">الأنماط الهندسية</a>
@@ -587,16 +601,15 @@ h1 {
   <button type="button" class="btn" onclick="showOnly('selector-screen')">العودة لاختيار سؤال آخر</button>
 </div>
 <!-- Add this button at the end of your game screen -->
-<button id="restart-button" class="btn" style="display:none;">إعادة اللعبة</button>
-<div id="results-screen" class="full-screen" style="display: none; background: url('winning\ team.png') center center / cover no-repeat;">
-  <div style="text-align: center; width: 100%;">
-    <h1 style="margin-top: 2cm; color: white; text-shadow: 2px 2px 5px black;">🏆 النتيجة النهائية 🏆</h1>
-    
-    <div id="score-summary" style="font-size: 24px; color: white; text-shadow: 1px 1px 3px black; margin-top: 20px;"></div>
-    
-    <h2 id="winner" style="color: #ffd700; font-size: 36px; margin-top: 3cm; text-shadow: 3px 3px 8px black;"></h2>
 
+<div id="results-screen" class="full-screen" style="display: none; background: url('winning team.png') center center / cover no-repeat;">
+  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+    <button id="winner-button" class="btn" style="font-size: 32px; padding: 20px 60px; margin-top: 3cm; background-color: #ffcc00; color: black; box-shadow: 3px 3px 10px rgba(0,0,0,0.5); border-radius: 20px;">
+      اسم الفريق الفائز
+    </button>
+    <div id="score-summary" style="font-size: 24px; color: white; text-shadow: 1px 1px 3px black; margin-top: 40px; text-align: center;"></div>
     <button class="btn" style="margin-top: 30px;" onclick="location.reload()">🔁 إعادة اللعبة</button>
+  </div>
   </div>
   <footer>
     Made by Noora Sami Sanad - CyberSecurity Student in UOB<br>
@@ -605,6 +618,14 @@ h1 {
 
   <script>
     let teamNames = [], teamScores = [], currentQuestion = 0, currentTeamIndex = 0;
+
+    const questionPoints = [
+  500, 1000, 1500, 2000, 2500,
+  500, 1000, 1500,2000, 2500,
+  500, 1000, 1500, 2000, 2500,
+  500, 1000, 1500, 2000, 2500
+];
+
 
     function showOnly(pageId) {
       const allPages = ["welcome-screen", "intro", "intro-screen", "page-4", 
@@ -644,15 +665,37 @@ h1 {
       showOnly("game-screen");
       showQuestion();
     }
+
+    function saveTeamsAndStart() {
+  saveTeams();
+
+  // Set announcement BEFORE showing the page
+  if (teamNames.length > 0) {
+    document.getElementById("team-start-announcement").textContent = `سيبدأ الفريق: ${teamNames[currentTeamIndex]}`;
+  }
+
+  showOnly('page-5'); // ✅ Move this line after setting the name
+}
+
+
     
-    function showQuestion() {
+function showQuestion() {
   const questions = document.querySelectorAll('.question-page');
   questions.forEach(q => q.style.display = 'none');
 
-  document.getElementById(`q${currentQuestion + 1}`).style.display = 'block';
+  const questionEl = document.getElementById(`q${currentQuestion + 1}`);
+  if (questionEl) {
+    questionEl.style.display = 'block';
+  }
 
-  document.getElementById("feedback").textContent = `الآن دور: ${teamNames[currentTeamIndex]}`;
+  // Ensure team name is shown
+  if (teamNames.length > 0) {
+    document.getElementById("feedback").textContent = `الآن دور: ${teamNames[currentTeamIndex]}`;
+  } else {
+    document.getElementById("feedback").textContent = `الآن دور الفريق`;
+  }
 }
+
 
     
 function checkAnswer(button, correctAnswer) {
@@ -664,7 +707,8 @@ function checkAnswer(button, correctAnswer) {
 
   if (button.textContent.trim() === correctAnswer) {
     button.classList.add('correct');
-    teamScores[currentTeamIndex]++;
+    teamScores[currentTeamIndex] += questionPoints[currentQuestion];
+alert(`🎯 حصلتم على ${questionPoints[currentQuestion]} نقطة!`);
   } else {
     button.classList.add('incorrect');
   }
@@ -683,7 +727,9 @@ function checkAnswerInput(inputId, correctAnswer) {
   if (userInput === correctAnswer) {
     alert("✅ إجابة صحيحة!");
     input.classList.add("correct");
-    teamScores[currentTeamIndex]++;
+    teamScores[currentTeamIndex] += questionPoints[currentQuestion];
+alert(`🎯 حصلتم على ${questionPoints[currentQuestion]} نقطة!`);
+
   } else {
     alert(`❌ خاطئ! الإجابة الصحيحة: ${correctAnswer}`);
     input.classList.add("incorrect");
@@ -715,34 +761,22 @@ function updateLiveScores() {
 
 function showResults() {
   let highestScore = Math.max(...teamScores);
-let winningTeams = teamNames.filter((_, i) => teamScores[i] === highestScore);
+  let winningTeams = teamNames.filter((_, i) => teamScores[i] === highestScore);
 
   const scoreSummary = document.getElementById("score-summary");
-  const winnerText = document.getElementById("winner");
+  const winnerBtn = document.getElementById("winner-button");
 
-  if (winningTeams.length > 1) {
-  winnerText.textContent = `🤝 It's a tie between: ${winningTeams.join(" & ")}`;
-} else {
-  winnerText.textContent = `🎉 Winner: ${winningTeams[0]}!`;
+  winnerBtn.textContent = winningTeams.length > 1
+  ? `🤝 تعادل بين الفرق: ${winningTeams.join(" و ")}`
+  : `🎉 الفريق الفائز هو: ${winningTeams[0]}!`;
 
-  // Optional image
-  let winnerPhoto = document.createElement("img");
-  winnerPhoto.src = `${winningTeams[0]}.png`;
-  winnerPhoto.alt = "Winner Photo";
-  winnerPhoto.style.maxWidth = "200px";
-  winnerPhoto.style.marginTop = "20px";
-  winnerText.appendChild(winnerPhoto);
-}
-  scoreSummary.innerHTML = teamNames.map((team, i) =>
+    scoreSummary.innerHTML = teamNames.map((team, i) =>
     `${team}: ${teamScores[i]} نقطة`
   ).join("<br>");
 
-  winnerText.textContent = winningTeams.length > 1
-    ? `🤝 تعادل بين الفرق: ${winningTeams.join(" و ")}`
-    : `🎉 الفريق الفائز هو: ${winningTeams[0]}!`;
-
-  document.querySelectorAll(".full-screen").forEach(el => el.style.display = "none");
-  document.getElementById("results-screen").style.display = "flex";}
+    document.querySelectorAll(".full-screen").forEach(el => el.style.display = "none");
+    document.getElementById("results-screen").style.display = "flex";
+  }
 
     function restartGame() {
       teamNames = [];
