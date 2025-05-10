@@ -304,6 +304,7 @@ h1 {
   <!-- Page 4 -->
   <div id="page-4">
     <button class="btn start-btn" onclick="showOnly('page-5')">إبدأ</button>
+    <div id="team-start-announcement" style="position: absolute; top: 2cm; right: 3cm; font-size: 24px; color: darkblue; font-weight: bold;"></div>
     <div class="video-links">
       <a href="https://youtu.be/wehOcwY_EnE" target="_blank" class="video-link">الأنماط الهندسية</a>
       <a href="https://youtu.be/HYzqMzu2PZI" target="_blank" class="video-link">تقدير الحجم والقياس </a>
@@ -613,31 +614,30 @@ h1 {
         document.getElementById(id).style.display = id === pageId ? "flex" : "none";
       });
     }
-    
-    function saveTeams() {
-      
-      teamNames = Array.from(document.querySelectorAll(".team-name"))
-                .map(i => i.value.trim()).filter(v => v !== "");
-                if (teamNames.length) {
-                currentTeamIndex = Math.floor(Math.random() * teamNames.length);
-                document.getElementById("feedback").textContent = `سيبدأ الفريق: ${teamNames[currentTeamIndex]}`;
+  function saveTeams() {
+  teamNames = Array.from(document.querySelectorAll(".team-name"))
+    .map(i => i.value.trim()).filter(v => v !== "");
 
+  if (teamNames.length) {
+    currentTeamIndex = Math.floor(Math.random() * teamNames.length);
+    document.getElementById("team-start-announcement").textContent = `سيبدأ الفريق: ${teamNames[currentTeamIndex]}`;
+  }
+
+  const inputs = document.querySelectorAll(".team-name");
+  teamScores = new Array(teamNames.length).fill(0);
+
+  const teamButtonsContainer = document.getElementById("team-buttons");
+  teamButtonsContainer.innerHTML = "";
+
+  teamNames.forEach(name => {
+    const b = document.createElement("button");
+    b.className = "btn"; 
+    b.textContent = name; 
+    b.style.margin = "5px";
+    teamButtonsContainer.appendChild(b);
+  });
 }
 
-      const inputs = document.querySelectorAll(".team-name");
-      teamScores = new Array(teamNames.length).fill(0);
-
-    
-      const teamButtonsContainer = document.getElementById("team-buttons");
-      teamButtonsContainer.innerHTML = "";}
-
-      teamNames.forEach(name => {
-  const b = document.createElement("button");
-  b.className = "btn"; 
-  b.textContent = name; 
-  b.style.margin = "5px";
-  teamButtonsContainer.appendChild(b);
-});
 
     function selectQuestion(idx) {
       currentQuestion = idx;
@@ -742,8 +742,7 @@ let winningTeams = teamNames.filter((_, i) => teamScores[i] === highestScore);
     : `🎉 الفريق الفائز هو: ${winningTeams[0]}!`;
 
   document.querySelectorAll(".full-screen").forEach(el => el.style.display = "none");
-  document.getElementById("results-screen").style.display = "flex";
-n}
+  document.getElementById("results-screen").style.display = "flex";}
 
     function restartGame() {
       teamNames = [];
